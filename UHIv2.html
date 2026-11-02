@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Heat Islands: Hong Kong Microclimates & Cooling Solutions</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nblack: '#0a0a0b',
+                        ncard: '#121214',
+                        nborder: '#27272a',
+                        naccent: '#00ff66',
+                        nblue: '#00d2ff',
+                        nheat: '#ff3b30',
+                        nwarn: '#ff9500',
+                    },
+                    fontFamily: {
+                        mono: ['"Courier New"', 'Courier', 'monospace'],
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Nothing OS Dot Matrix Background Effect */
+        .bg-dot-matrix {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        .bg-dot-matrix-dense {
+            background-image: radial-gradient(rgba(0, 255, 102, 0.15) 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+
+        /* Custom Scrollbar - Boxy */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff66;
+        }
+
+        /* Scanning Line Animation */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+        .animate-scan {
+            animation: scanline 8s linear infinite;
+        }
+
+        /* Active Hotspot Pulse - Boxy */
+        @keyframes pulse-square {
+            0% { outline-offset: 0px; outline-color: rgba(0, 255, 102, 0.8); }
+            50% { outline-offset: 6px; outline-color: rgba(0, 255, 102, 0); }
+            100% { outline-offset: 0px; outline-color: rgba(0, 255, 102, 0.8); }
+        }
+        .hotspot-active {
+            animation: pulse-square 2s infinite ease-out;
+        }
+    </style>
+</head>
+<body class="bg-nblack text-zinc-200 antialiased font-sans selection:bg-naccent selection:text-nblack">
+
+    <!-- Top Status Bar / Header (Nothing OS Style) -->
+    <header class="sticky top-0 z-50 bg-nblack/90 backdrop-blur-md border-b border-nborder">
+        <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between text-xs font-mono">
+            <a href="#" class="flex items-center space-x-3 group">
+                <span class="w-3 h-3 bg-naccent inline-block"></span>
+                <span class="font-bold text-white tracking-widest uppercase">UHI // HK_LAB_v2.4</span>
+            </a>
+
+            <nav class="hidden md:flex space-x-6 text-zinc-400 uppercase tracking-wider">
+                <a href="#overview" class="hover:text-naccent transition-colors">[01 OVERVIEW]</a>
+                <a href="#simulator" class="hover:text-naccent transition-colors">[02 SIMULATOR]</a>
+                <a href="#hk-cases" class="hover:text-naccent transition-colors">[03 HK ANALYSIS]</a>
+                <a href="#solutions" class="hover:text-naccent transition-colors">[04 ACTION PLAN]</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <span class="hidden sm:inline-block text-[11px] text-zinc-500 uppercase">LOCATION: HONG KONG (22.3193° N)</span>
+                <a href="#solutions" class="border border-naccent bg-naccent/10 hover:bg-naccent hover:text-nblack text-naccent px-3 py-1 font-mono transition-all">
+                    TAKE ACTION
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="space-y-16 py-8">
+
+        <!-- Hero Section (Monochrome + Thermal Warning accents) -->
+        <section class="max-w-7xl mx-auto px-4 pt-6 pb-12">
+            <div class="border border-nborder bg-ncard p-6 sm:p-12 relative overflow-hidden bg-dot-matrix">
+                
+                <!-- Dot Matrix Corner Markers -->
+                <div class="absolute top-2 left-2 text-[10px] font-mono text-zinc-600">+----+</div>
+                <div class="absolute top-2 right-2 text-[10px] font-mono text-zinc-600">+----+</div>
+
+                <div class="inline-flex items-center space-x-2 border border-zinc-700 bg-black/60 px-3 py-1 mb-6 text-xs font-mono text-naccent">
+                    <span class="w-2 h-2 bg-nheat animate-ping"></span>
+                    <span>HONG KONG MICROCLIMATE MONITOR</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white uppercase font-mono leading-none mb-6">
+                    CONCRETE CANYONS <br/>
+                    <span class="text-naccent">&amp; THERMAL TRAPS.</span>
+                </h1>
+
+                <p class="text-zinc-400 text-base sm:text-lg max-w-3xl leading-relaxed mb-8">
+                    Hong Kong's hyper-dense cityscape—packed with high-rise building walls, dense asphalt, and over 1.5 million air conditioners—traps solar energy, creating urban heat islands up to <span class="text-nheat font-mono font-bold">4.0°C to 10.0°C hotter</span> in districts like Mong Kok compared to country parks like Sai Kung.
+                </p>
+
+                <!-- Metrics Dashboard Grid (Dot-matrix box aesthetics) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-zinc-800 font-mono">
+                    <div class="border border-zinc-800 bg-black/40 p-4">
+                        <div class="text-xs text-zinc-500 uppercase">Urban Delta</div>
+                        <div class="text-3xl font-bold text-nheat mt-1">+10.0°C</div>
+                        <div class="text-[11px] text-zinc-400 mt-1">Peak Mong Kok vs. Rural night gap</div>
+                    </div>
+                    <div class="border border-zinc-800 bg-black/40 p-4">
+                        <div class="text-xs text-zinc-500 uppercase">Pavement Heat</div>
+                        <div class="text-3xl font-bold text-nwarn mt-1">>50.0°C</div>
+                        <div class="text-[11px] text-zinc-400 mt-1">Dark asphalt in Causeway Bay (Summer)</div>
+                    </div>
+                    <div class="border border-zinc-800 bg-black/40 p-4">
+                        <div class="text-xs text-zinc-500 uppercase">Canopy Buffer</div>
+                        <div class="text-3xl font-bold text-naccent mt-1">-3.5°C</div>
+                        <div class="text-[11px] text-zinc-400 mt-1">Cooling benefit of country park cover</div>
+                    </div>
+                    <div class="border border-zinc-800 bg-black/40 p-4">
+                        <div class="text-xs text-zinc-500 uppercase">Hot Nights / Yr</div>
+                        <div class="text-3xl font-bold text-nblue mt-1">52+</div>
+                        <div class="text-[11px] text-zinc-400 mt-1">Nighttime temps ≥28°C in urban core</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 01: Overview & Definition -->
+        <section id="overview" class="max-w-7xl mx-auto px-4">
+            <div class="border border-nborder bg-ncard p-6 sm:p-8">
+                <div class="flex items-center space-x-3 mb-6 font-mono text-xs text-naccent">
+                    <span>[01]</span>
+                    <span class="uppercase tracking-widest">THERMAL MECHANICS OVERVIEW</span>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="border border-zinc-800 p-6 bg-black/30">
+                        <div class="font-mono text-xs text-nwarn mb-2">// 01. ABSORPTION</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Low Albedo Materials</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed">
+                            Hong Kong's extensive dark concrete, asphalt roads, and building facades absorb high solar radiation during the daytime, storing thermal energy instead of reflecting it.
+                        </p>
+                    </div>
+
+                    <div class="border border-zinc-800 p-6 bg-black/30">
+                        <div class="font-mono text-xs text-nheat mb-2">// 02. ANTHROPOGENIC HEAT</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">AC Exhaust &amp; Traffic</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed">
+                            Dense clusters of high-rise air conditioning condenser units pump massive volumes of waste heat directly into narrow, poorly ventilated street canyons like Sham Shui Po.
+                        </p>
+                    </div>
+
+                    <div class="border border-zinc-800 p-6 bg-black/30">
+                        <div class="font-mono text-xs text-nblue mb-2">// 03. IMPERMEABILITY</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Lost Evapotranspiration</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed">
+                            Impermeable urban concrete prevents rainwater infiltration into the soil. With sparse vegetation, natural evaporative cooling is almost completely absent in commercial hubs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 02: Interactive Comparative Simulator (Based directly on User Image Reference) -->
+        <section id="simulator" class="max-w-7xl mx-auto px-4">
+            <div class="border border-nborder bg-ncard p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-zinc-800 gap-4 font-mono">
+                    <div>
+                        <div class="text-xs text-naccent uppercase tracking-widest mb-1">[02] COMPARATIVE MICROCLIMATE SIMULATOR</div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white uppercase">Rural vs. High-Density Urban Zone</h2>
+                    </div>
+                    <div class="text-xs text-zinc-400 bg-black/60 border border-zinc-800 p-3">
+                        SELECT HOTSPOTS OR COMPARISON NODES TO INSPECT HK METRICS
+                    </div>
+                </div>
+
+                <!-- Main Comparative Visual Split Block -->
+                <div class="grid lg:grid-cols-12 gap-6 items-start font-mono">
+                    
+                    <!-- Diagram Graphic Canvas Area (8 Columns) -->
+                    <div class="lg:col-span-8 border border-zinc-800 bg-black/80 p-4 sm:p-6 relative select-none">
+                        
+                        <!-- Top Floating Heat Status Banner -->
+                        <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-6">
+                            <span class="text-xs text-naccent flex items-center">
+                                <span class="w-2 h-2 bg-naccent inline-block mr-2"></span> SAI KUNG RURAL
+                            </span>
+                            <span class="text-xs text-nheat font-bold border border-nheat/40 bg-nheat/10 px-2 py-0.5">
+                                MONG KOK CITY: +3°C to 10°C HOTTER
+                            </span>
+                        </div>
+
+                        <!-- Split Diagram Container -->
+                        <div class="grid md:grid-cols-2 gap-6 relative">
+                            
+                            <!-- Left Block: Rural Area (Sai Kung / Country Park) -->
+                            <div class="border border-emerald-900/60 bg-emerald-950/20 p-4 relative flex flex-col justify-between min-h-[340px]">
+                                <div class="bg-emerald-500/20 text-naccent border border-emerald-500/40 text-xs px-2.5 py-1 font-bold inline-block self-start mb-3">
+                                    RURAL AREA // SAI KUNG COUNTRY PARK
+                                </div>
+
+                                <!-- SVG Illustration for Country Park Zone -->
+                                <div class="my-4 relative h-44 border border-emerald-900/40 bg-emerald-950/40 p-2 flex flex-col justify-end">
+                                    
+                                    <!-- Evaporation Vapor Arrow SVG -->
+                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-80">
+                                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                            <path d="M 50,90 Q 45,50 50,10" fill="none" stroke="#00ff66" stroke-width="2" stroke-dasharray="3 3"/>
+                                            <polygon points="50,5 45,15 55,15" fill="#00ff66"/>
+                                        </svg>
+                                    </div>
+
+                                    <!-- Trees & Soil Visual -->
+                                    <div class="flex items-end justify-around relative z-10">
+                                        <button onclick="inspectElement('rural_trees')" class="hotspot-btn text-naccent text-4xl hover:scale-110 transition-transform focus:outline-none" title="Click to inspect tree canopy">
+                                            <i class="fa-solid fa-tree"></i>
+                                        </button>
+                                        <button onclick="inspectElement('rural_trees')" class="hotspot-btn text-emerald-400 text-3xl hover:scale-110 transition-transform focus:outline-none">
+                                            <i class="fa-solid fa-trees"></i>
+                                        </button>
+                                        <button onclick="inspectElement('water_body')" class="hotspot-btn text-nblue text-3xl hover:scale-110 transition-transform focus:outline-none">
+                                            <i class="fa-solid fa-water"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Soil Water Infiltration Layer -->
+                                    <div class="mt-2 pt-2 border-t border-emerald-800/60 text-center">
+                                        <button onclick="inspectElement('water_pen')" class="w-full text-[11px] text-nblue border border-nblue/40 bg-nblue/10 py-1 hover:bg-nblue/20 transition-colors">
+                                            <i class="fa-solid fa-arrow-down-long"></i> DEEP WATER PENETRATION
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="text-[11px] text-zinc-400 space-y-1">
+                                    <div>• High Evapotranspiration Cooling</div>
+                                    <div>• Natural Permeable Soil Layer</div>
+                                    <div>• Low Heat Storage</div>
+                                </div>
+                            </div>
+
+                            <!-- Right Block: City Zone (Mong Kok / Causeway Bay) -->
+                            <div class="border border-red-900/60 bg-red-950/20 p-4 relative flex flex-col justify-between min-h-[340px]">
+                                <div class="bg-red-500/20 text-nheat border border-red-500/40 text-xs px-2.5 py-1 font-bold inline-block self-start mb-3">
+                                    HIGH-DENSITY CITY // MONG KOK / CENTRAL
+                                </div>
+
+                                <!-- SVG Illustration for Dense City Zone -->
+                                <div class="my-4 relative h-44 border border-red-900/40 bg-red-950/40 p-2 flex flex-col justify-end overflow-hidden">
+                                    
+                                    <!-- Trapped Heat Dome Glow -->
+                                    <div class="absolute inset-0 bg-red-500/10 pointer-events-none"></div>
+
+                                    <!-- Buildings & Asphalt Vector Graphics -->
+                                    <div class="flex items-end justify-around relative z-10">
+                                        <button onclick="inspectElement('city_buildings')" class="hotspot-btn text-zinc-300 text-4xl hover:scale-110 transition-transform focus:outline-none" title="Click building canyons">
+                                            <i class="fa-solid fa-city"></i>
+                                        </button>
+                                        <button onclick="inspectElement('ac_waste')" class="hotspot-btn text-nwarn text-2xl hover:scale-110 transition-transform focus:outline-none" title="Click AC waste heat">
+                                            <i class="fa-solid fa-fan"></i>
+                                        </button>
+                                        <button onclick="inspectElement('asphalt')" class="hotspot-btn text-nheat text-3xl hover:scale-110 transition-transform focus:outline-none" title="Click dark pavement">
+                                            <i class="fa-solid fa-road"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Impermeable Pavement Layer -->
+                                    <div class="mt-2 pt-2 border-t border-red-800/60 text-center">
+                                        <button onclick="inspectElement('no_penetration')" class="w-full text-[11px] text-nheat border border-nheat/40 bg-nheat/10 py-1 hover:bg-nheat/20 transition-colors">
+                                            <i class="fa-solid fa-xmark"></i> BLOCKED WATER PENETRATION
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="text-[11px] text-zinc-400 space-y-1">
+                                    <div>• Intense Heat Storage in Walls</div>
+                                    <div>• Concrete Wall-Effect (Wall Buildings)</div>
+                                    <div>• Heavy AC Waste Heat Exhaust</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Central Comparison Connecting Node Boxes (Matching User's Reference Diagram Structure) -->
+                        <div class="mt-6 pt-6 border-t border-zinc-800">
+                            <div class="text-xs text-zinc-400 mb-3 text-center uppercase">// Click Comparison Nodes Below</div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center text-xs">
+                                <button onclick="inspectElement('node_heat')" class="p-3 border border-zinc-700 bg-black/60 hover:border-nheat hover:text-nheat transition-all">
+                                    <div class="text-zinc-500 text-[10px] uppercase">RURAL [LESS] vs CITY [GREATER]</div>
+                                    <div class="font-bold text-white mt-1">Heat Absorption &amp; Retention</div>
+                                </button>
+
+                                <button onclick="inspectElement('node_transpiration')" class="p-3 border border-zinc-700 bg-black/60 hover:border-naccent hover:text-naccent transition-all">
+                                    <div class="text-zinc-500 text-[10px] uppercase">RURAL [HIGH] vs CITY [MINIMAL]</div>
+                                    <div class="font-bold text-white mt-1">Plant Transpiration &amp; Evaporation</div>
+                                </button>
+
+                                <button onclick="inspectElement('node_water')" class="p-3 border border-zinc-700 bg-black/60 hover:border-nblue hover:text-nblue transition-all">
+                                    <div class="text-zinc-500 text-[10px] uppercase">RURAL [DEEP] vs CITY [BLOCKED]</div>
+                                    <div class="font-bold text-white mt-1">Water Infiltration &amp; Runoff</div>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Inspection Card Output Side Panel (4 Columns) -->
+                    <div class="lg:col-span-4">
+                        <div id="inspector-output" class="border border-zinc-800 bg-black p-6 min-h-[480px] flex flex-col justify-between">
+                            <!-- Dynamic Content Rendered via JavaScript -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 03: Hong Kong Case Study Analysis -->
+        <section id="hk-cases" class="max-w-7xl mx-auto px-4">
+            <div class="border border-nborder bg-ncard p-6 sm:p-8">
+                <div class="flex items-center space-x-3 mb-6 font-mono text-xs text-naccent">
+                    <span>[03]</span>
+                    <span class="uppercase tracking-widest">HONG KONG URBAN PROFILE &amp; WALL BUILDINGS</span>
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-bold text-white uppercase font-mono mb-8">
+                    District Microclimates: <span class="text-nheat">Mong Kok to Tai Mo Shan</span>
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Case 1: Mong Kok Canyon -->
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="flex items-center justify-between mb-4 font-mono text-xs">
+                            <span class="text-nheat font-bold">[HIGH-DENSITY URBAN CORE]</span>
+                            <span class="text-zinc-500">MONG KOK / SHAM SHUI PO</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Street Canyons &amp; Heat Traps</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-4">
+                            In Mong Kok, building heights greatly exceed street widths. This narrow aspect ratio traps thermal radiation and prevents coastal sea breezes from Victoria Harbour from flushing out accumulated heat and pollution during hot summer afternoons.
+                        </p>
+                        <div class="border-t border-zinc-800 pt-3 flex items-center justify-between font-mono text-xs">
+                            <span class="text-zinc-500">Night Temp Elevation:</span>
+                            <span class="text-nheat font-bold">+4.0°C to +8.0°C</span>
+                        </div>
+                    </div>
+
+                    <!-- Case 2: Harbourfront Wall Effect -->
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="flex items-center justify-between mb-4 font-mono text-xs">
+                            <span class="text-nwarn font-bold">[WALL-EFFECT ARCHITECTURE]</span>
+                            <span class="text-zinc-500">VICTORIA HARBOURFRONT</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Barrier High-Rises</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-4">
+                            Continuous rows of high-rise residential towers along coastal reclamation areas act as solid concrete walls, blocking air corridors. This deprives inland districts like Kowloon City of essential marine cooling ventilation.
+                        </p>
+                        <div class="border-t border-zinc-800 pt-3 flex items-center justify-between font-mono text-xs">
+                            <span class="text-zinc-500">Wind Velocity Loss:</span>
+                            <span class="text-nwarn font-bold">Up to 60% Inland Reduction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 04: Solutions & Action Plan -->
+        <section id="solutions" class="max-w-7xl mx-auto px-4">
+            <div class="border border-nborder bg-ncard p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-zinc-800 gap-4">
+                    <div>
+                        <div class="text-xs text-naccent font-mono uppercase tracking-widest mb-1">[04] ACTION PLAYBOOK</div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white font-mono uppercase">Hong Kong Cooling Solutions</h2>
+                    </div>
+
+                    <!-- Action Tab Buttons -->
+                    <div class="flex space-x-2 font-mono text-xs">
+                        <button id="tab-ind-btn" onclick="switchTab('ind')" class="border border-naccent bg-naccent text-nblack font-bold px-4 py-2 uppercase transition-all">
+                            Individual Actions
+                        </button>
+                        <button id="tab-gov-btn" onclick="switchTab('gov')" class="border border-zinc-700 bg-black text-zinc-400 hover:text-white px-4 py-2 uppercase transition-all">
+                            Community &amp; Policy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Individual Actions Content -->
+                <div id="tab-ind-content" class="grid md:grid-cols-2 gap-6 font-mono">
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-naccent text-xs mb-2 font-bold">// ACTION 01</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">A/C Efficiency &amp; Eco Temperatures</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Set household air conditioners to 25.5°C alongside ceiling fans. Each 1°C increase saves ~6% energy and reduces hot waste heat exhausted into street corridors.
+                        </p>
+                        <span class="text-xs text-naccent border border-naccent/40 bg-naccent/10 px-2 py-0.5 inline-block">Impact: Immediate Waste Heat Reduction</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-naccent text-xs mb-2 font-bold">// ACTION 02</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Balcony &amp; Roof Greening</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Plant potted foliage and vertical climbing plants on balconies to absorb direct sunlight before it warms concrete building envelopes.
+                        </p>
+                        <span class="text-xs text-naccent border border-naccent/40 bg-naccent/10 px-2 py-0.5 inline-block">Impact: Lowers Indoor Wall Temp by 2°C–4°C</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-naccent text-xs mb-2 font-bold">// ACTION 03</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Solar Reflective Window Films</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Apply high-albedo solar shading films on glass windows facing south and west to block infrared solar gain during peak summer hours.
+                        </p>
+                        <span class="text-xs text-naccent border border-naccent/40 bg-naccent/10 px-2 py-0.5 inline-block">Impact: Cuts AC Cooling Demand</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-naccent text-xs mb-2 font-bold">// ACTION 04</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Permeable Outdoor Surfaces</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            For private garden plots or village houses in the New Territories, replace solid concrete paving with porous grass pavers to allow water evaporation.
+                        </p>
+                        <span class="text-xs text-naccent border border-naccent/40 bg-naccent/10 px-2 py-0.5 inline-block">Impact: Restores Natural Infiltration</span>
+                    </div>
+                </div>
+
+                <!-- Community & Policy Content (Hidden by default) -->
+                <div id="tab-gov-content" class="grid md:grid-cols-2 gap-6 font-mono hidden">
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-nblue text-xs mb-2 font-bold">// POLICY 01</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Urban Air Corridor Mandates</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Enforce HKSAR Planning Department air ventilation assessments (AVA) to preserve wind gaps between buildings along coastal corridors.
+                        </p>
+                        <span class="text-xs text-nblue border border-nblue/40 bg-nblue/10 px-2 py-0.5 inline-block">Strategy: Ventilation &amp; Airflow</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-nblue text-xs mb-2 font-bold">// POLICY 02</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Cool Pavements &amp; Reflective Roofs</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Apply light-colored reflective pavement coatings on public footpaths and basketball courts to reduce surface radiation in high-density estates.
+                        </p>
+                        <span class="text-xs text-nblue border border-nblue/40 bg-nblue/10 px-2 py-0.5 inline-block">Strategy: Albedo Enhancement</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-nblue text-xs mb-2 font-bold">// POLICY 03</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">Blue-Green Infrastructure</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Expand urban parks, bio-swales, and artificial wetlands in new development zones like Kai Tak and the Northern Metropolis.
+                        </p>
+                        <span class="text-xs text-nblue border border-nblue/40 bg-nblue/10 px-2 py-0.5 inline-block">Strategy: CEDD / DSD Urban Greening</span>
+                    </div>
+
+                    <div class="border border-zinc-800 bg-black/40 p-6">
+                        <div class="text-nblue text-xs mb-2 font-bold">// POLICY 04</div>
+                        <h3 class="text-lg font-bold text-white mb-2 uppercase">District Cooling Systems (DCS)</h3>
+                        <p class="text-sm text-zinc-400 leading-relaxed mb-3">
+                            Implement centralized seawater-cooled district cooling systems (such as in Kai Tak) to eliminate individual rooftop AC waste heat units.
+                        </p>
+                        <span class="text-xs text-nblue border border-nblue/40 bg-nblue/10 px-2 py-0.5 inline-block">Strategy: 35% Energy Reduction</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Share Callout Section -->
+        <section class="max-w-7xl mx-auto px-4 pb-12">
+            <div class="border border-naccent bg-naccent/5 p-8 text-center font-mono relative overflow-hidden">
+                <h3 class="text-2xl sm:text-3xl font-bold text-white uppercase mb-4">
+                    HELP COOL HONG KONG'S MICROCLIMATE
+                </h3>
+                <p class="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed mb-6">
+                    Educate your estate committee, neighbors, and peers on the urban heat island effect and sustainable cooling practices.
+                </p>
+                <button onclick="copyShareLink()" class="border border-naccent bg-naccent hover:bg-white text-nblack font-bold px-6 py-3 uppercase transition-all">
+                    <i class="fa-solid fa-link mr-2"></i> COPY RESOURCE LINK
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-nborder bg-nblack py-8 font-mono text-xs text-zinc-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 bg-naccent inline-block"></span>
+                <span class="text-white font-bold">UHI HK EDUCATIONAL PLATFORM</span>
+            </div>
+            <div>METRIC STANDARDS: CELSIUS (°C) // CASE STUDY: HONG KONG S.A.R.</div>
+            <div>NOTHING OS STYLED INTERFACE</div>
+        </div>
+    </footer>
+
+    <!-- Interactive Inspector Script -->
+    <script>
+        // Data for Rural vs Urban Microclimate Inspection Nodes
+        const inspectorData = {
+            rural_trees: {
+                title: "Sai Kung Canopy Cover",
+                category: "RURAL COOLING BUFFER",
+                badgeClass: "border-naccent text-naccent bg-naccent/10",
+                tempMetric: "Air Temp: 26.0°C (Rural Base)",
+                description: "Mature tree canopy in Sai Kung and Country Parks provides shade and continuous evapotranspiration, transferring heat away as latent vapor.",
+                hkNote: "Hong Kong country parks cover ~40% of HK land, offering critical regional thermal relief."
+            },
+            water_body: {
+                title: "Coastal Waters & Reservoirs",
+                category: "NATURAL HEAT SINK",
+                badgeClass: "border-nblue text-nblue bg-nblue/10",
+                tempMetric: "High Specific Heat Capacity",
+                description: "Natural water bodies absorb thermal energy without rapid temperature surges, providing a stable microclimate buffer during daytime radiation spikes.",
+                hkNote: "Coastal breezes off Victoria Harbour cool immediate waterfront areas when unobstructed."
+            },
+            water_pen: {
+                title: "Deep Water Infiltration",
+                category: "SOIL HYDRATION LAYER",
+                badgeClass: "border-nblue text-nblue bg-nblue/10",
+                tempMetric: "Infiltration Rate: >80%",
+                description: "Permeable unpaved soil allows rainwater to sink deep into underground aquifers, retaining water needed for vegetation evaporative cooling.",
+                hkNote: "Country park soils retain heavy summer monsoon rain, feeding steady transpiration."
+            },
+            city_buildings: {
+                title: "Mong Kok Concrete Canyons",
+                category: "HEAT RETENTION ZONE",
+                badgeClass: "border-nheat text-nheat bg-nheat/10",
+                tempMetric: "Concrete Temp: Up to 48.0°C",
+                description: "Dense high-rise building clusters store vast amounts of heat during daylight. At night, narrow street canyons trap this heat, preventing cooling breezes.",
+                hkNote: "High building height-to-street-width ratios in Mong Kok create severe thermal trapping."
+            },
+            ac_waste: {
+                title: "Commercial & Domestic A/C Exhaust",
+                category: "ANTHROPOGENIC HEAT SOURCE",
+                badgeClass: "border-nwarn text-nwarn bg-nwarn/10",
+                tempMetric: "Exhaust Heat Output: +3.0°C Localized",
+                description: "Over 1.5 million active air conditioners in Hong Kong discharge hot condenser exhaust straight into pedestrian street corridors.",
+                hkNote: "High density of units in Sham Shui Po and Jordan amplifies summer evening ambient heat."
+            },
+            asphalt: {
+                title: "Impervious Dark Pavement",
+                category: "SURFACE ABSORPTION",
+                badgeClass: "border-nheat text-nheat bg-nheat/10",
+                tempMetric: "Surface Temp: >52.0°C (Summer)",
+                description: "Dark asphalt roads absorb up to 90% of solar energy. Heat is re-radiated continuously long into the night.",
+                hkNote: "Major roads in Central and Causeway Bay stay significantly hot past midnight."
+            },
+            no_penetration: {
+                title: "Blocked Water Penetration",
+                category: "URBAN RUNOFF RISKS",
+                badgeClass: "border-nwarn text-nwarn bg-nwarn/10",
+                tempMetric: "Infiltration Rate: <5%",
+                description: "Impermeable concrete routes stormwater directly into drainage channels, leaving the urban ground bone-dry and unable to undergo evaporative cooling.",
+                hkNote: "Paved urban surfaces force fast stormwater runoff into harbour drains."
+            },
+            node_heat: {
+                title: "Comparison: Heat Absorption & Retention",
+                category: "THERMAL STORAGE GAP",
+                badgeClass: "border-nheat text-nheat bg-nheat/10",
+                tempMetric: "City Delta: +4.0°C to +10.0°C Hotter",
+                description: "Rural areas store minimal solar heat due to foliage cover. Cities absorb enormous thermal energy that is released back into urban night air.",
+                hkNote: "Urban Hong Kong suffers from 'Hot Night' events where night temperatures stay ≥28.0°C."
+            },
+            node_transpiration: {
+                title: "Comparison: Plant Transpiration",
+                category: "EVAPORATIVE COOLING CAPACITY",
+                badgeClass: "border-naccent text-naccent bg-naccent/10",
+                tempMetric: "Cooling Equivalent: ~3.5°C Reduction",
+                description: "Plant leaves release moisture that cools surrounding air. Urban centers with sparse plant cover lose this free natural air conditioning.",
+                hkNote: "Greening urban rooftops in Kowloon can significantly restore local evaporative potential."
+            },
+            node_water: {
+                title: "Comparison: Water Infiltration",
+                category: "HYDROLOGICAL BALANCE",
+                badgeClass: "border-nblue text-nblue bg-nblue/10",
+                tempMetric: "Runoff Delta: High vs Minimal",
+                description: "Unpaved rural ground absorbs monsoon rain into soil reserves. Sealed city streets shed water rapidly, keeping surfaces dry and hot.",
+                hkNote: "Hong Kong's Drainage Services Dept is expanding porous pavements in new public projects."
+            }
+        };
+
+        // Render Inspection Card Details
+        function inspectElement(key) {
+            const item = inspectorData[key];
+            if (!item) return;
+
+            const container = document.getElementById('inspector-output');
+            container.style.opacity = '0.3';
+
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4 font-mono">
+                            <span class="text-[10px] font-bold px-2.5 py-1 border ${item.badgeClass} uppercase">
+                                ${item.category}
+                            </span>
+                            <span class="text-zinc-600 text-xs">// INSPECT_MODE</span>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-white uppercase font-mono mb-2">${item.title}</h3>
+                        
+                        <div class="font-mono text-xs text-nwarn bg-zinc-900/90 border border-zinc-800 p-2.5 mb-4 inline-block w-full">
+                            <i class="fa-solid fa-temperature-high mr-1"></i> ${item.tempMetric}
+                        </div>
+
+                        <p class="text-zinc-300 text-xs leading-relaxed mb-4">
+                            ${item.description}
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-zinc-800 font-mono">
+                        <div class="text-[10px] font-bold text-naccent uppercase tracking-widest mb-1">
+                            // HONG KONG CASE CONTEXT
+                        </div>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            ${item.hkNote}
+                        </p>
+                    </div>
+                `;
+                container.style.opacity = '1';
+            }, 100);
+        }
+
+        // Action Tab Toggle Logic
+        function switchTab(type) {
+            const btnInd = document.getElementById('tab-ind-btn');
+            const btnGov = document.getElementById('tab-gov-btn');
+            const contentInd = document.getElementById('tab-ind-content');
+            const contentGov = document.getElementById('tab-gov-content');
+
+            if (type === 'ind') {
+                btnInd.className = "border border-naccent bg-naccent text-nblack font-bold px-4 py-2 uppercase transition-all";
+                btnGov.className = "border border-zinc-700 bg-black text-zinc-400 hover:text-white px-4 py-2 uppercase transition-all";
+                contentInd.classList.remove('hidden');
+                contentGov.classList.add('hidden');
+            } else {
+                btnGov.className = "border border-naccent bg-naccent text-nblack font-bold px-4 py-2 uppercase transition-all";
+                btnInd.className = "border border-zinc-700 bg-black text-zinc-400 hover:text-white px-4 py-2 uppercase transition-all";
+                contentGov.classList.remove('hidden');
+                contentInd.classList.add('hidden');
+            }
+        }
+
+        // Copy Share Link Alert alternative
+        function copyShareLink() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 border border-naccent bg-nblack text-naccent font-mono text-xs px-4 py-3 shadow-2xl z-50 flex items-center space-x-2';
+            toast.innerHTML = '<i class="fa-solid fa-square-check"></i><span>LINK COPIED TO CLIPBOARD</span>';
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // Load Default Inspection Target
+        window.onload = function() {
+            inspectElement('node_heat');
+        };
+    </script>
+</body>
+</html>

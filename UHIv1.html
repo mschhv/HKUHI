@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Heat Islands: Visualizing & Cooling Our Cities</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            50: '#f2f8f5',
+                            100: '#e1f0e9',
+                            500: '#2d6a4f',
+                            700: '#1b4332',
+                            900: '#081c15',
+                        },
+                        ocean: {
+                            50: '#f0f7fa',
+                            500: '#1d70a2',
+                            600: '#14557b',
+                            700: '#0e3b56',
+                        },
+                        sage: '#81b29a',
+                        terracotta: '#e07a5f',
+                        slatebg: '#f8faf9',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for crisp modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar for modern feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Pulse animation for hotspot radar ring */
+        @keyframes radar-pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            70% { transform: scale(1.6); opacity: 0; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+        .radar-ring {
+            animation: radar-pulse 2s infinite cubic-bezier(0.45, 0, 0.55, 1);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .glass-dark {
+            background: rgba(8, 28, 21, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slatebg text-slate-800 antialiased font-sans selection:bg-forest-500 selection:text-white">
+
+    <!-- Sleek Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-slate-200/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-2 text-forest-900 font-semibold tracking-tight text-lg">
+                <span class="w-7 h-7 rounded-full bg-forest-500 flex items-center justify-center text-white text-xs">
+                    <i class="fa-solid fa-temperature-arrow-up"></i>
+                </span>
+                <span>UrbanHeat<span class="text-forest-500 font-light">Lab</span></span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="#overview" class="hover:text-forest-700 transition-colors">Overview</a>
+                <a href="#interactive" class="hover:text-forest-700 transition-colors">Interactive Model</a>
+                <a href="#impacts" class="hover:text-forest-700 transition-colors">Impacts</a>
+                <a href="#solutions" class="hover:text-forest-700 transition-colors">Solutions</a>
+            </nav>
+
+            <a href="#solutions" class="bg-forest-700 hover:bg-forest-900 text-white text-xs font-medium px-4 py-2 rounded-full transition-all shadow-sm hover:shadow">
+                Take Action
+            </a>
+        </div>
+    </header>
+
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="relative min-h-[85vh] flex items-center justify-center px-6 py-20 bg-gradient-to-b from-forest-50/70 via-white to-slatebg overflow-hidden">
+            <!-- Decorative background glow blobs -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-sage/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 -right-32 w-96 h-96 bg-ocean-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto text-center relative z-10">
+                <div class="inline-flex items-center space-x-2 bg-white/80 border border-slate-200 px-3.5 py-1.5 rounded-full shadow-xs mb-8">
+                    <span class="flex h-2 w-2 rounded-full bg-terracotta"></span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-600">Climate & Urban Health</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-forest-900 leading-[1.08] mb-6">
+                    Why Cities Feel Like Ovens—<br class="hidden sm:block"/>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-forest-500 via-ocean-500 to-forest-700">
+                        And How We Cool Them Down.
+                    </span>
+                </h1>
+
+                <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed mb-10">
+                    Urban Heat Islands (UHI) elevate temperatures in cities by up to 7°F–22°F higher than surrounding natural landscapes. Explore the science, impacts, and solutions transforming urban concrete into resilient, cool communities.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#interactive" class="w-full sm:w-auto bg-forest-700 hover:bg-forest-900 text-white font-medium px-8 py-4 rounded-full transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
+                        <span>Explore Interactive City</span>
+                        <i class="fa-solid fa-arrow-down text-xs"></i>
+                    </a>
+                    <a href="#overview" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium px-8 py-4 rounded-full transition-all duration-300 shadow-xs hover:shadow-sm">
+                        Learn the Basics
+                    </a>
+                </div>
+
+                <!-- Quick Stat Metrics -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-16 pt-12 border-t border-slate-200/80">
+                    <div class="p-4 rounded-2xl bg-white/50 border border-slate-100">
+                        <div class="text-3xl sm:text-4xl font-bold text-terracotta">+22°F</div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-1">Peak urban evening temperature variance</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/50 border border-slate-100">
+                        <div class="text-3xl sm:text-4xl font-bold text-forest-700">85%+</div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-1">Solar energy absorbed by dark asphalt</div>
+                    </div>
+                    <div class="col-span-2 md:col-span-1 p-4 rounded-2xl bg-white/50 border border-slate-100">
+                        <div class="text-3xl sm:text-4xl font-bold text-ocean-600">2-9°F</div>
+                        <div class="text-xs sm:text-sm text-slate-500 mt-1">Cooling potential with mature tree canopy</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Section -->
+        <section id="overview" class="py-24 px-6 max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs uppercase font-bold tracking-widest text-forest-500 mb-3">Understanding the Phenomenon</h2>
+                <h3 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">The Anatomy of a Thermal Trap</h3>
+                <p class="text-slate-600 mt-4 leading-relaxed">
+                    When natural environments (forests, fields, wetlands) are replaced by dense concentrations of pavement, concrete, and roofs, the landscape loses its natural capacity to cool itself.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-forest-50 text-forest-700 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">High Solar Absorption</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Traditional roofing materials, concrete roads, and asphalt have a low albedo (reflectivity). They absorb solar radiation continuously during the day and re-radiate it as heat long into the night.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-ocean-50 text-ocean-600 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-tree"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Loss of Evapotranspiration</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Trees and plants absorb water through roots and release it into the atmosphere via leaves. This natural evaporative cooling process is severely diminished in paved urban centers.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Anthropogenic Waste Heat</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Air conditioning units, motor vehicles, industrial operations, and heavy machinery pump massive amounts of secondary heat directly into the immediate urban microclimate.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Heat Island Diagram Section -->
+        <section id="interactive" class="py-20 px-6 bg-slate-900 text-white rounded-[2.5rem] max-w-7xl mx-auto shadow-2xl relative overflow-hidden">
+            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between border-b border-slate-800 pb-6">
+                <div>
+                    <span class="text-xs uppercase font-bold tracking-widest text-sage">Interactive Exploration</span>
+                    <h3 class="text-3xl sm:text-4xl font-bold mt-1">Urban Microclimate Simulator</h3>
+                </div>
+                <p class="text-slate-400 text-sm max-w-md mt-2 md:mt-0">
+                    Click on the active hot spots below to investigate the root causes of heat retention and discover modern cooling remedies.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- SVG Diagram Column -->
+                <div class="lg:col-span-8 bg-slate-950/80 rounded-2xl p-4 sm:p-6 border border-slate-800 relative min-h-[380px] sm:min-h-[460px] flex flex-col justify-between select-none">
+                    
+                    <!-- Top Temperature Graph Line SVG Overlay -->
+                    <div class="w-full h-16 relative">
+                        <svg class="w-full h-full" viewBox="0 0 600 60" preserveAspectRatio="none">
+                            <path d="M 0,45 Q 150,42 220,15 T 380,10 T 480,40 T 600,48" fill="none" stroke="#e07a5f" stroke-width="3" stroke-dasharray="4 2"/>
+                            <path d="M 0,45 Q 150,42 220,15 T 380,10 T 480,40 T 600,48 L 600,60 L 0,60 Z" fill="url(#grad)" opacity="0.2"/>
+                            <defs>
+                                <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#e07a5f" />
+                                    <stop offset="100%" stop-color="#e07a5f" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute top-1 left-2 text-[10px] text-slate-400 font-mono">TEMP PROFILE (°F)</div>
+                        <div class="absolute top-0 left-[48%] -translate-x-1/2 text-xs font-semibold text-terracotta bg-slate-900/90 px-2 py-0.5 rounded border border-terracotta/40">
+                            Downtown Peak: +12°F
+                        </div>
+                    </div>
+
+                    <!-- Landscape Illustration (Urban to Rural Cross Section) -->
+                    <div class="relative w-full h-64 sm:h-72 my-4 bg-gradient-to-b from-slate-900 to-slate-950 rounded-xl overflow-hidden border border-slate-800/80">
+                        
+                        <!-- Sun & Solar Radiation -->
+                        <div class="absolute top-3 left-1/2 -translate-x-1/2 text-center pointer-events-none">
+                            <i class="fa-solid fa-sun text-amber-400 text-3xl animate-pulse"></i>
+                            <div class="text-[10px] text-amber-200/70 tracking-widest uppercase mt-1">Solar Radiation</div>
+                        </div>
+
+                        <!-- Heat Waves Effect (Pure CSS) -->
+                        <div class="absolute inset-0 bg-[radial-gradient(#e07a5f_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none"></div>
+
+                        <!-- Graphical Vector Shapes (Rural to City) -->
+                        <div class="absolute bottom-0 inset-x-0 h-40 flex items-end">
+                            
+                            <!-- Rural / Forest Zone (Left) -->
+                            <div class="w-1/4 h-full flex flex-col justify-end items-center relative bg-gradient-to-t from-forest-900/60 to-transparent">
+                                <i class="fa-solid fa-trees text-emerald-500 text-5xl mb-2 opacity-90"></i>
+                                <span class="text-[11px] font-semibold text-emerald-300 bg-slate-900/80 px-2 py-0.5 rounded mb-2">Rural Zone</span>
+                            </div>
+
+                            <!-- Suburban Zone (Mid-Left) -->
+                            <div class="w-1/4 h-3/4 flex flex-col justify-end items-center relative border-l border-slate-800">
+                                <i class="fa-solid fa-house-chimney text-slate-400 text-3xl mb-2"></i>
+                                <span class="text-[11px] font-semibold text-slate-300 bg-slate-900/80 px-2 py-0.5 rounded mb-2">Suburban</span>
+                            </div>
+
+                            <!-- Commercial High-Density City (Center-Right) -->
+                            <div class="w-2/4 h-full flex justify-around items-end px-2 border-l border-slate-800 bg-red-950/20">
+                                <div class="w-12 h-32 bg-slate-800 border-t-2 border-slate-600 rounded-t flex flex-col items-center justify-around py-2">
+                                    <div class="w-6 h-3 bg-slate-700 rounded-xs"></div>
+                                    <div class="w-6 h-3 bg-slate-700 rounded-xs"></div>
+                                </div>
+                                <div class="w-16 h-44 bg-slate-800 border-t-2 border-slate-600 rounded-t flex flex-col items-center justify-around py-2">
+                                    <div class="w-10 h-4 bg-amber-500/30 rounded-xs"></div>
+                                    <div class="w-10 h-4 bg-slate-700 rounded-xs"></div>
+                                    <div class="w-10 h-4 bg-slate-700 rounded-xs"></div>
+                                </div>
+                                <div class="w-14 h-28 bg-slate-800 border-t-2 border-slate-600 rounded-t flex flex-col items-center justify-around py-2">
+                                    <div class="w-8 h-3 bg-slate-700 rounded-xs"></div>
+                                    <div class="w-8 h-3 bg-slate-700 rounded-xs"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Ground Baseline -->
+                        <div class="absolute bottom-0 inset-x-0 h-4 bg-slate-800 border-t border-slate-700"></div>
+
+                        <!-- Interactive Hotspot Buttons -->
+                        
+                        <!-- Hotspot 1: Asphalt/Road -->
+                        <button onclick="selectHotspot('asphalt')" class="hotspot-btn absolute bottom-3 right-[25%] transform translate-x-1/2 group focus:outline-none" aria-label="Asphalt & Concrete Hotspot">
+                            <span class="relative flex h-8 w-8 items-center justify-center">
+                                <span class="radar-ring absolute inline-flex h-full w-full rounded-full bg-terracotta opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-7 w-7 bg-terracotta text-white items-center justify-center text-xs font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-road"></i>
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- Hotspot 2: Dark Roofs -->
+                        <button onclick="selectHotspot('roofs')" class="hotspot-btn absolute top-[35%] right-[22%] group focus:outline-none" aria-label="Dark Roofs Hotspot">
+                            <span class="relative flex h-8 w-8 items-center justify-center">
+                                <span class="radar-ring absolute inline-flex h-full w-full rounded-full bg-terracotta opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-7 w-7 bg-terracotta text-white items-center justify-center text-xs font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-building"></i>
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- Hotspot 3: Traffic & HVAC -->
+                        <button onclick="selectHotspot('traffic')" class="hotspot-btn absolute bottom-10 right-[10%] group focus:outline-none" aria-label="Traffic & HVAC Heat Hotspot">
+                            <span class="relative flex h-8 w-8 items-center justify-center">
+                                <span class="radar-ring absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-7 w-7 bg-amber-500 text-white items-center justify-center text-xs font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-smog"></i>
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- Hotspot 4: Tree Canopy (Cool Zone) -->
+                        <button onclick="selectHotspot('trees')" class="hotspot-btn absolute bottom-6 left-[12%] group focus:outline-none" aria-label="Urban Forestry Hotspot">
+                            <span class="relative flex h-8 w-8 items-center justify-center">
+                                <span class="radar-ring absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-7 w-7 bg-emerald-500 text-white items-center justify-center text-xs font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-tree"></i>
+                                </span>
+                            </span>
+                        </button>
+
+                        <!-- Hotspot 5: Green Roof (Solution showcase) -->
+                        <button onclick="selectHotspot('greenroof')" class="hotspot-btn absolute top-[48%] right-[34%] group focus:outline-none" aria-label="Cool & Green Roofs Hotspot">
+                            <span class="relative flex h-8 w-8 items-center justify-center">
+                                <span class="radar-ring absolute inline-flex h-full w-full rounded-full bg-ocean-500 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-7 w-7 bg-ocean-500 text-white items-center justify-center text-xs font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-seedling"></i>
+                                </span>
+                            </span>
+                        </button>
+
+                    </div>
+
+                    <!-- Legend Footnote -->
+                    <div class="flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2 pt-2 border-t border-slate-800">
+                        <div class="flex items-center space-x-4">
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-terracotta inline-block"></span>
+                                <span>Heat Contributors</span>
+                            </span>
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
+                                <span>Cooling Buffers</span>
+                            </span>
+                        </div>
+                        <span class="text-slate-500 text-[11px]">Click hotspots to inspect element details</span>
+                    </div>
+
+                </div>
+
+                <!-- Sleek Inspection Side Panel -->
+                <div class="lg:col-span-4">
+                    <div id="inspector-card" class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700/80 shadow-xl transition-all duration-300 min-h-[460px] flex flex-col justify-between">
+                        <!-- Dynamic Content Populated via JavaScript -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Why It Matters Section (Impacts) -->
+        <section id="impacts" class="py-24 px-6 max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs uppercase font-bold tracking-widest text-ocean-600 mb-3">Consequences of Overheating</h2>
+                <h3 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Why Urban Heat Demand Action</h3>
+                <p class="text-slate-600 mt-4 leading-relaxed">
+                    Urban heat islands are more than a summertime discomfort—they impact public health, economic stability, and environmental justice.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Impact 1 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-red-50 text-terracotta flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">Health & Social Equity</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Extreme heat is the leading cause of weather-related deaths globally. Vulnerable populations—including seniors, outdoor workers, and low-income neighborhoods with fewer trees—face disproportionate health risks.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-xs font-semibold text-terracotta flex items-center justify-between">
+                        <span>Risk Factor</span>
+                        <span>High Priority</span>
+                    </div>
+                </div>
+
+                <!-- Impact 2 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-bolt font-bold"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">Grid Strain & Energy Costs</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            For every 1°F rise in summer temperature, air conditioning demand increases by 1.5% to 2.0%. This drives up household utility bills and creates potential grid overload and rolling blackouts.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-xs font-semibold text-amber-600 flex items-center justify-between">
+                        <span>Economic Burden</span>
+                        <span>+1.5-2.0% per °F</span>
+                    </div>
+                </div>
+
+                <!-- Impact 3 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-ocean-50 text-ocean-600 flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-cloud-rain"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">Water Quality & Ecosystems</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Stormwater running off hot urban rooftops and pavement heats up before entering streams and rivers. Rapid temperature shifts shock aquatic ecosystems and degrade water quality.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-xs font-semibold text-ocean-600 flex items-center justify-between">
+                        <span>Environmental Impact</span>
+                        <span>Aquatic Stress</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Action-Oriented Solutions Hub -->
+        <section id="solutions" class="py-24 px-6 bg-forest-50/60 border-t border-b border-forest-100">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-xs uppercase font-bold tracking-widest text-forest-700 mb-3">Action-Oriented Playbook</h2>
+                    <h3 class="text-3xl sm:text-4xl font-bold text-forest-900 tracking-tight">How We Cool Our Cities Together</h3>
+                    <p class="text-slate-600 mt-4 leading-relaxed">
+                        Cooling our urban environments requires a combination of personal choices, neighborhood initiatives, and progressive urban design.
+                    </p>
+
+                    <!-- Toggle Tabs -->
+                    <div class="inline-flex p-1.5 bg-white rounded-full border border-slate-200 shadow-xs mt-8">
+                        <button id="btn-individual" onclick="switchTab('individual')" class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 bg-forest-700 text-white shadow-xs">
+                            Individual Actions
+                        </button>
+                        <button id="btn-community" onclick="switchTab('community')" class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900">
+                            Community & City Planning
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 1: Individual Actions -->
+                <div id="tab-individual" class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-forest-100 text-forest-700 flex-shrink-0 flex items-center justify-center font-bold">
+                            1
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Plant Native Trees & Shade Vegetation</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Plant shade trees on the south and west sides of your home to block direct solar radiation during peak afternoon heat.
+                            </p>
+                            <span class="inline-block bg-forest-50 text-forest-700 text-xs px-3 py-1 rounded-full font-medium">Impact: Reduces indoor temps up to 10°F</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-forest-100 text-forest-700 flex-shrink-0 flex items-center justify-center font-bold">
+                            2
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Install High-Albedo "Cool Roofs"</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                When replacing your roof, choose reflective shingles or solar-reflective coatings that reflect up to 80% of sunlight.
+                            </p>
+                            <span class="inline-block bg-forest-50 text-forest-700 text-xs px-3 py-1 rounded-full font-medium">Impact: Lowers roof temp by 50°F in summer</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-forest-100 text-forest-700 flex-shrink-0 flex items-center justify-center font-bold">
+                            3
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Opt for Permeable Paving</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Replace solid asphalt driveways or patios with permeable pavers, gravel, or grass grids that allow rainwater absorption.
+                            </p>
+                            <span class="inline-block bg-forest-50 text-forest-700 text-xs px-3 py-1 rounded-full font-medium">Impact: Cools ground & mitigates stormwater runoff</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-forest-100 text-forest-700 flex-shrink-0 flex items-center justify-center font-bold">
+                            4
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Smart Energy & Cooling Habits</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Use programmable thermostats, maintain A/C efficiency, and shift high-energy appliance usage to off-peak evening hours.
+                            </p>
+                            <span class="inline-block bg-forest-50 text-forest-700 text-xs px-3 py-1 rounded-full font-medium">Impact: Reduces waste heat generation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Community & Policy Actions (Hidden by default) -->
+                <div id="tab-community" class="grid md:grid-cols-2 gap-8 hidden">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-ocean-50 text-ocean-600 flex-shrink-0 flex items-center justify-center font-bold">
+                            1
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Urban Tree Canopy Goals</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Advocate for city ordinances mandating 30%+ urban tree canopy coverage, focusing first on historically shade-deprived neighborhoods.
+                            </p>
+                            <span class="inline-block bg-ocean-50 text-ocean-600 text-xs px-3 py-1 rounded-full font-medium">Policy: Climate Equity & Canopy Mandates</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-ocean-50 text-ocean-600 flex-shrink-0 flex items-center justify-center font-bold">
+                            2
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Cool Pavement Coating Initiatives</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Municipal programs that apply solar-reflective sealants to public streets, parking lots, and playgrounds to keep surface temps down.
+                            </p>
+                            <span class="inline-block bg-ocean-50 text-ocean-600 text-xs px-3 py-1 rounded-full font-medium">Infrastructure: Reflective Street Coatings</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-ocean-50 text-ocean-600 flex-shrink-0 flex items-center justify-center font-bold">
+                            3
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Living Roof Policies</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Incentive programs and building codes requiring new commercial structures to incorporate rooftop gardens or solar installations.
+                            </p>
+                            <span class="inline-block bg-ocean-50 text-ocean-600 text-xs px-3 py-1 rounded-full font-medium">Building Code: Green Infrastructure</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xs flex items-start space-x-5">
+                        <div class="w-10 h-10 rounded-xl bg-ocean-50 text-ocean-600 flex-shrink-0 flex items-center justify-center font-bold">
+                            4
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2">Public Shade & Cooling Centers</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-3">
+                                Expanding shade structures at transit stops, public parks, and establishing accessible cooling centers during extreme summer heat events.
+                            </p>
+                            <span class="inline-block bg-ocean-50 text-ocean-600 text-xs px-3 py-1 rounded-full font-medium">Public Safety: Resilience Centers</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Call to Action Banner -->
+        <section class="py-24 px-6 bg-gradient-to-br from-forest-900 via-forest-700 to-ocean-700 text-white text-center relative overflow-hidden">
+            <div class="max-w-4xl mx-auto relative z-10">
+                <h3 class="text-3xl sm:text-5xl font-bold tracking-tight mb-6">Ready to Help Cool Your Neighborhood?</h3>
+                <p class="text-forest-100 text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                    Every tree planted, reflective roof installed, and community shade initiative makes a tangible difference. Small, concerted actions compound into cooler, healthier cities.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="shareInitiative()" class="w-full sm:w-auto bg-white text-forest-900 hover:bg-forest-50 font-semibold px-8 py-4 rounded-full transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>Share This Educational Resource</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-12 px-6 border-t border-slate-800 text-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-2 text-white">
+                <span class="w-6 h-6 rounded-full bg-forest-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-temperature-arrow-up"></i>
+                </span>
+                <span class="font-semibold tracking-tight">UrbanHeatLab</span>
+            </div>
+            <p class="text-xs text-slate-500">
+                Designed for public education on urban microclimates, thermal resilience, and sustainable urban design.
+            </p>
+            <div class="text-xs text-slate-400">
+                © Educational Resource. Open to all.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Data for Interactive Hotspots
+        const hotspotData = {
+            asphalt: {
+                title: "Dark Asphalt & Pavement",
+                category: "Major Heat Contributor",
+                badgeColor: "bg-terracotta/20 text-terracotta border-terracotta/30",
+                icon: "fa-solid font-bold fa-road text-terracotta",
+                tempImpact: "Surface Temps Up To 120°F–150°F",
+                description: "Paved surfaces like roads, parking lots, and sidewalks cover up to 30-45% of typical city surface area. Dark impervious asphalt absorbs up to 90% of solar radiation.",
+                solutionTitle: "Reflective Coatings & Permeable Surfaces",
+                solutionDesc: "Cool pavement sealants reflect solar heat. Permeable pavers allow water to seep through, enabling natural cooling evaporative cycles."
+            },
+            roofs: {
+                title: "Traditional Dark Rooftops",
+                category: "Major Heat Contributor",
+                badgeColor: "bg-terracotta/20 text-terracotta border-terracotta/30",
+                icon: "fa-solid fa-building text-terracotta",
+                tempImpact: "Peak Summer Temps: +50°F Above Air Temp",
+                description: "Conventional dark roofs absorb solar heat directly into building structures, causing air conditioning units to work harder and venting excess thermal energy into the street level.",
+                solutionTitle: "Cool Reflective Roofs",
+                solutionDesc: "Applying reflective coatings or light-colored shingles reflects sunlight away, lowering roof surface temperatures dramatically."
+            },
+            traffic: {
+                title: "Vehicle & HVAC Waste Heat",
+                category: "Anthropogenic Heat Source",
+                badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+                icon: "fa-solid fa-smog text-amber-400",
+                tempImpact: "Localized Microclimate Spikes: +3°F to +8°F",
+                description: "Combustion engines, stop-and-go traffic, and thousands of air conditioning condenser units continuously exhaust mechanical waste heat straight into dense street canyons.",
+                solutionTitle: "Electrification & Energy Efficiency",
+                solutionDesc: "Transitioning to electric vehicles and upgrading building energy efficiency significantly reduces artificial heat output."
+            },
+            trees: {
+                title: "Urban Tree Canopy & Vegetation",
+                category: "Natural Cooling Buffer",
+                badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+                icon: "fa-solid fa-tree text-emerald-400",
+                tempImpact: "Cooling Effect: 2°F to 9°F Air Reduction",
+                description: "Trees cool the air through direct shading and evapotranspiration (releasing water moisture through leaves). A mature tree canopy can lower surface temperatures by 20°F–45°F.",
+                solutionTitle: "Urban Forestry Expansion",
+                solutionDesc: "Protecting existing mature trees and aggressively planting diverse native species along street corridors."
+            },
+            greenroof: {
+                title: "Green & Eco-Rooftops",
+                category: "Modern Urban Solution",
+                badgeColor: "bg-ocean-500/20 text-ocean-300 border-ocean-500/30",
+                icon: "fa-solid fa-seedling text-ocean-300",
+                tempImpact: "Reduces Ambient Air Temps by 3°F-6°F",
+                description: "Rooftop gardens incorporate vegetation layers over waterproof membranes. They absorb rainwater, insulate buildings, and eliminate rooftop thermal absorption.",
+                solutionTitle: "Green Roof Policies & Retrofits",
+                solutionDesc: "Converting flat urban roofs into living gardens cuts building energy demands by 15-25% while improving stormwater retention."
+            }
+        };
+
+        // Function to select and render hotspot details into inspection card
+        function selectHotspot(key) {
+            const data = hotspotData[key];
+            if (!data) return;
+
+            const card = document.getElementById('inspector-card');
+            
+            // Render HTML content into side panel with smooth transition effect
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs px-3 py-1 rounded-full font-medium border ${data.badgeColor}">
+                                ${data.category}
+                            </span>
+                            <i class="${data.icon} text-xl"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-1">${data.title}</h4>
+                        <div class="text-xs font-mono text-amber-300 mb-4 bg-slate-900/60 p-2 rounded border border-slate-700/60 inline-block">
+                            <i class="fa-solid fa-gauge-high mr-1"></i> ${data.tempImpact}
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            ${data.description}
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-700">
+                        <div class="text-xs uppercase font-bold text-emerald-400 tracking-wider mb-2 flex items-center">
+                            <i class="fa-solid fa-circle-check mr-1.5"></i> Solution & Action
+                        </div>
+                        <h5 class="text-sm font-semibold text-white mb-1">${data.solutionTitle}</h5>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            ${data.solutionDesc}
+                        </p>
+                    </div>
+                `;
+                card.style.opacity = '1';
+            }, 150);
+        }
+
+        // Switch Action Tabs (Individual vs Community)
+        function switchTab(tab) {
+            const btnIndividual = document.getElementById('btn-individual');
+            const btnCommunity = document.getElementById('btn-community');
+            const tabIndividual = document.getElementById('tab-individual');
+            const tabCommunity = document.getElementById('tab-community');
+
+            if (tab === 'individual') {
+                btnIndividual.className = "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 bg-forest-700 text-white shadow-xs";
+                btnCommunity.className = "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900";
+                tabIndividual.classList.remove('hidden');
+                tabCommunity.classList.add('hidden');
+            } else {
+                btnCommunity.className = "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 bg-forest-700 text-white shadow-xs";
+                btnIndividual.className = "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900";
+                tabCommunity.classList.remove('hidden');
+                tabIndividual.classList.add('hidden');
+            }
+        }
+
+        // Share Action Handler
+        function shareInitiative() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            // Sleek non-alert notification message
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white text-sm px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 z-50 flex items-center space-x-3 transition-opacity duration-300';
+            toast.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i><span>Website link copied to clipboard!</span>';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize default inspection state on load
+        window.onload = function() {
+            selectHotspot('asphalt');
+        };
+    </script>
+</body>
+</html>
